@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "健身资讯平台整体架构",
+    "quality_profile": "showcase",
+    "viewBox": [1320, 760]
+  },
+  "components": [
+    { "id": "visitor", "type": "external", "label": "用户与运营人员", "sublabel": "访客 / 会员 / 编辑 / 管理员", "pos": [40, 320], "size": [160, 72] },
+    { "id": "web", "type": "frontend", "label": "Vue 3 门户与管理端", "sublabel": "TypeScript · Vite · Element Plus", "pos": [250, 320], "size": [190, 72] },
+    { "id": "gateway", "type": "security", "label": "接入与安全层", "sublabel": "Nginx · Spring Security · JWT", "pos": [490, 320], "size": [180, 72] },
+    { "id": "application", "type": "backend", "label": "业务应用层", "sublabel": "内容 · 计划 · 营养 · 器材 · 用户", "pos": [730, 190], "size": [210, 78] },
+    { "id": "ai", "type": "backend", "label": "AI 健身助手", "sublabel": "LangChain4j · RAG · 安全护栏", "pos": [730, 450], "size": [210, 78] },
+    { "id": "mysql", "type": "database", "label": "MySQL 8", "sublabel": "业务事实与事务数据", "pos": [1020, 70], "size": [170, 68] },
+    { "id": "redis", "type": "database", "label": "Redis", "sublabel": "缓存 · 会话 · 限流 · 热榜", "pos": [1020, 200], "size": [170, 68] },
+    { "id": "search", "type": "database", "label": "Elasticsearch", "sublabel": "资讯全文检索与聚合", "pos": [1020, 330], "size": [170, 68] },
+    { "id": "vector", "type": "database", "label": "向量数据库", "sublabel": "知识分块与语义索引", "pos": [1020, 460], "size": [170, 68] },
+    { "id": "model", "type": "external", "label": "OpenAI 兼容模型", "sublabel": "Chat · Embedding · Rerank", "pos": [1020, 590], "size": [170, 68] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "健身资讯平台", "wraps": ["web", "gateway", "application", "ai", "mysql", "redis", "search", "vector"] },
+    { "kind": "security-group", "label": "受控应用区", "wraps": ["gateway", "application", "ai"] }
+  ],
+  "connections": [
+    { "id": "access", "from": "visitor", "to": "web", "label": "浏览与运营", "variant": "emphasis", "labelDy": -30 },
+    { "id": "api", "from": "web", "to": "gateway", "label": "HTTPS / REST", "labelDy": -30 },
+    { "id": "business", "from": "gateway", "to": "application", "label": "鉴权后的业务请求" },
+    { "id": "assistant", "from": "gateway", "to": "ai", "label": "对话与推荐请求" },
+    { "id": "tx", "from": "application", "to": "mysql" },
+    { "id": "cache", "from": "application", "to": "redis" },
+    { "id": "fulltext", "from": "application", "to": "search" },
+    { "id": "semantic", "from": "ai", "to": "vector" },
+    { "id": "inference", "from": "ai", "to": "model", "label": "模型推理", "variant": "dashed" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "首期形态", "items": ["模块化单体部署", "领域边界清晰", "按流量热点独立扩展"] },
+    { "dot": "violet", "title": "数据职责", "items": ["MySQL 保存事实", "ES 负责全文检索", "向量库负责语义检索"] },
+    { "dot": "emerald", "title": "演进方向", "items": ["搜索与 AI 优先拆分", "异步事件同步索引", "媒体文件走对象存储与 CDN"] }
+  ]
+}
