@@ -36,6 +36,10 @@ export default defineConfig(({ mode }) => {
               target: proxyTarget,
               changeOrigin: true,
             },
+            '/files': {
+              target: proxyTarget,
+              changeOrigin: true,
+            },
           },
         }
       : undefined,

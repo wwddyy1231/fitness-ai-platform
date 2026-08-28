@@ -7,72 +7,92 @@ import FeaturedArticle from '@/components/business/FeaturedArticle.vue'
 import TrainingPlanCard from '@/components/business/TrainingPlanCard.vue'
 import TrendingList from '@/components/business/TrendingList.vue'
 import VideoCard from '@/components/business/VideoCard.vue'
-import {
-  featuredArticle,
-  featuredRecommendations,
-  fitnessCategories,
-  fitnessVideos,
-  latestArticles,
-  trainingPlans,
-  trendingArticles,
-} from '@/mocks/home'
+import HomeRemoteState from '@/components/common/HomeRemoteState.vue'
+import { useHomeContent } from '@/composables/useHomeContent'
+import { fitnessVideos, trainingPlans } from '@/mocks/home'
+
+const { status, data: home, errorMessage, load } = useHomeContent()
+onMounted(load)
 </script>
 
 <template>
   <div class="home-view">
-    <div class="content-container hero-wrap">
-      <FeaturedArticle :article="featuredArticle" :recommendations="featuredRecommendations" />
-    </div>
-
-    <section class="trending-section" aria-labelledby="trending-title">
-      <div class="content-container">
-        <div class="section-heading">
-          <div>
-            <span class="section-kicker">24H RANKING</span>
-            <h2 id="trending-title" class="section-title">今日热门</h2>
-          </div>
-          <a class="section-link" href="/#latest"
-            >查看全部 <ArrowRight :size="16" aria-hidden="true"
-          /></a>
-        </div>
-        <TrendingList :items="trendingArticles" />
+    <template v-if="status === 'success' && home">
+      <div v-if="home.featuredArticle" class="content-container hero-wrap">
+        <FeaturedArticle
+          :article="home.featuredArticle"
+          :recommendations="home.featuredRecommendations"
+        />
       </div>
-    </section>
 
-    <section id="latest" class="latest-section" aria-labelledby="latest-title">
-      <div class="content-container latest-layout">
-        <div class="latest-column">
+      <section
+        v-if="home.trendingArticles.length"
+        class="trending-section"
+        aria-labelledby="trending-title"
+      >
+        <div class="content-container">
           <div class="section-heading">
             <div>
-              <span class="section-kicker">LATEST STORIES</span>
-              <h2 id="latest-title" class="section-title">最新健身资讯</h2>
+              <span class="section-kicker">24H RANKING</span>
+              <h2 id="trending-title" class="section-title">今日热门</h2>
             </div>
             <a class="section-link" href="/#latest"
-              >更多资讯 <ArrowRight :size="16" aria-hidden="true"
+              >查看全部 <ArrowRight :size="16" aria-hidden="true"
             /></a>
           </div>
-          <div class="article-list">
-            <ArticleListItem
-              v-for="article in latestArticles"
-              :key="article.id"
-              :article="article"
-            />
-          </div>
+          <TrendingList :items="home.trendingArticles" />
         </div>
-        <aside id="categories" class="category-column" aria-labelledby="category-title">
-          <span class="section-kicker">EXPLORE</span>
-          <h2 id="category-title" class="section-title">找到你的训练方向</h2>
-          <p class="category-intro">从目标、训练环境和知识主题出发，快速进入对应内容。</p>
-          <div class="category-grid">
-            <CategoryCard
-              v-for="category in fitnessCategories"
-              :key="category.id"
-              :category="category"
-            />
+      </section>
+
+      <section
+        v-if="home.latestArticles.length || home.fitnessCategories.length"
+        id="latest"
+        class="latest-section"
+        aria-labelledby="latest-title"
+      >
+        <div class="content-container latest-layout">
+          <div v-if="home.latestArticles.length" class="latest-column">
+            <div class="section-heading">
+              <div>
+                <span class="section-kicker">LATEST STORIES</span>
+                <h2 id="latest-title" class="section-title">最新健身资讯</h2>
+              </div>
+              <a class="section-link" href="/#latest"
+                >更多资讯 <ArrowRight :size="16" aria-hidden="true"
+              /></a>
+            </div>
+            <div class="article-list">
+              <ArticleListItem
+                v-for="article in home.latestArticles"
+                :key="article.id"
+                :article="article"
+              />
+            </div>
           </div>
-        </aside>
-      </div>
-    </section>
+          <aside
+            v-if="home.fitnessCategories.length"
+            id="categories"
+            class="category-column"
+            aria-labelledby="category-title"
+          >
+            <span class="section-kicker">EXPLORE</span>
+            <h2 id="category-title" class="section-title">找到你的训练方向</h2>
+            <p class="category-intro">从目标、训练环境和知识主题出发，快速进入对应内容。</p>
+            <div class="category-grid">
+              <CategoryCard
+                v-for="category in home.fitnessCategories"
+                :key="category.id"
+                :category="category"
+              />
+            </div>
+          </aside>
+        </div>
+      </section>
+    </template>
+
+    <div v-else class="content-container">
+      <HomeRemoteState :status="status" :message="errorMessage" @retry="load" />
+    </div>
 
     <section id="plans" class="plans-section" aria-labelledby="plans-title">
       <div class="content-container">

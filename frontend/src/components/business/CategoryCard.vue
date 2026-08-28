@@ -22,7 +22,9 @@ const icon = computed(() => icons[props.category.icon])
       <h3>{{ category.name }}</h3>
       <p>{{ category.description }}</p>
     </div>
-    <strong>{{ category.articleCount }}<small>篇</small></strong></a
+    <strong v-if="category.articleCount !== null"
+      >{{ category.articleCount }}<small>篇</small></strong
+    ><strong v-else><small>专题</small></strong></a
   >
 </template>
 

@@ -3,8 +3,12 @@ import { ArrowRight } from '@lucide/vue'
 import type { ArticleSummary } from '@/types/content'
 
 defineProps<{ article: ArticleSummary; recommendations: ArticleSummary[] }>()
-const formatDate = (value: string) =>
-  new Intl.DateTimeFormat('zh-CN', { month: 'short', day: 'numeric' }).format(new Date(value))
+const formatDate = (value: string) => {
+  const date = new Date(value)
+  return Number.isNaN(date.getTime())
+    ? '时间待更新'
+    : new Intl.DateTimeFormat('zh-CN', { month: 'short', day: 'numeric' }).format(date)
+}
 </script>
 
 <template>

@@ -4,7 +4,11 @@ import { isApiResponse } from './response'
 
 describe('isApiResponse', () => {
   it('accepts the backend response envelope', () => {
-    expect(isApiResponse({ code: 0, message: 'success', data: null })).toBe(true)
+    expect(isApiResponse({ code: 0, message: 'success', data: { id: '1' } })).toBe(true)
+  })
+
+  it('accepts responses whose null data was omitted by Jackson', () => {
+    expect(isApiResponse({ code: 40401, message: '文章不存在' })).toBe(true)
   })
 
   it('rejects values that do not match the backend response envelope', () => {

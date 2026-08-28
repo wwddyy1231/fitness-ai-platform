@@ -27,7 +27,7 @@ export interface FitnessCategory {
   id: string
   name: string
   description: string
-  articleCount: number
+  articleCount: number | null
   icon: CategoryIcon
 }
 
