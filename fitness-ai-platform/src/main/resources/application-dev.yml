@@ -1,0 +1,5 @@
+app:
+  seed:
+    home:
+      enabled: ${DEV_HOME_SEED_ENABLED:false}
+      cleanup: ${DEV_HOME_SEED_CLEANUP:false}
