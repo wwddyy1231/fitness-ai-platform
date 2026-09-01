@@ -16,6 +16,15 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: 'login',
+        name: 'login',
+        component: () => import('@/views/LoginView.vue'),
+        meta: {
+          title: '用户登录｜Fitness AI Platform',
+          description: '登录 Fitness AI Platform，使用个性化健身服务。',
+        },
+      },
+      {
         path: 'article/:id',
         name: 'article-detail',
         component: () => import('@/views/ArticleDetailView.vue'),

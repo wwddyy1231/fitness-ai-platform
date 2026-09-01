@@ -60,6 +60,13 @@ public class AuthService {
         return new LoginVO(token, "Bearer", jwtService.expirationSeconds(), toVO(user, roles));
     }
 
+    public UserVO currentUser(String username) {
+        User user = findByUsername(username);
+        if (user == null) throw new BusinessException(40102, "登录用户不存在");
+        if (!Integer.valueOf(1).equals(user.getStatus())) throw new BusinessException(40301, "账号已被禁用");
+        return toVO(user, userMapper.selectRoleCodes(user.getId()));
+    }
+
     private User findByUsername(String username) {
         return userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
     }

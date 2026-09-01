@@ -53,6 +53,9 @@ class SecurityConfigTest {
 
     @Test
     void protectsAiChatAndContentWrites() throws Exception {
+        mockMvc.perform(get("/api/v1/auth/me")).andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/api/v1/auth/me").with(user("member").roles("MEMBER")))
+                .andExpect(status().isOk());
         mockMvc.perform(post("/api/ai/chat")).andExpect(status().isUnauthorized());
         mockMvc.perform(post("/api/v1/articles")).andExpect(status().isUnauthorized());
         mockMvc.perform(post("/api/v1/articles").with(user("member").roles("MEMBER")))
@@ -99,7 +102,7 @@ class SecurityConfigTest {
 
     @RestController
     static class TestController {
-        @GetMapping({"/api/v1/articles/1", "/api/v1/home"})
+        @GetMapping({"/api/v1/articles/1", "/api/v1/home", "/api/v1/auth/me"})
         Map<String, Boolean> read() {
             return Map.of("ok", true);
         }

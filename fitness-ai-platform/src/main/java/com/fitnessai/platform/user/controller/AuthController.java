@@ -8,6 +8,8 @@ import com.fitnessai.platform.user.vo.LoginVO;
 import com.fitnessai.platform.user.vo.UserVO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,5 +31,10 @@ public class AuthController {
     @PostMapping("/login")
     public ApiResponse<LoginVO> login(@Valid @RequestBody LoginRequest request) {
         return ApiResponse.success(authService.login(request));
+    }
+
+    @GetMapping("/me")
+    public ApiResponse<UserVO> me(Authentication authentication) {
+        return ApiResponse.success(authService.currentUser(authentication.getName()));
     }
 }

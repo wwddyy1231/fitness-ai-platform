@@ -1,4 +1,5 @@
 import axios from 'axios'
+import type { InternalAxiosRequestConfig } from 'axios'
 
 import { ApiClientError, toApiClientError } from './error'
 import { isApiResponse } from './response'
@@ -18,6 +19,26 @@ export const apiClient = axios.create({
   },
 })
 
+interface ApiAuthHooks {
+  getToken: () => string | null
+  onUnauthorized: () => void | Promise<void>
+}
+
+let authHooks: ApiAuthHooks = {
+  getToken: () => null,
+  onUnauthorized: () => undefined,
+}
+
+export function configureApiAuth(hooks: ApiAuthHooks): void {
+  authHooks = hooks
+}
+
+apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  const token = authHooks.getToken()
+  if (token) config.headers.Authorization = `Bearer ${token}`
+  return config
+})
+
 apiClient.interceptors.response.use(
   (response) => {
     if (isApiResponse(response.data) && response.data.code !== 0) {
@@ -31,5 +52,9 @@ apiClient.interceptors.response.use(
 
     return response
   },
-  (error: unknown) => Promise.reject(toApiClientError(error)),
+  async (error: unknown) => {
+    const normalized = toApiClientError(error)
+    if (normalized.status === 401) await authHooks.onUnauthorized()
+    return Promise.reject(normalized)
+  },
 )
