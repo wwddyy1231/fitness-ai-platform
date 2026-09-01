@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fitnessai.platform.common.exception.BusinessException;
 import com.fitnessai.platform.content.entity.Article;
 import com.fitnessai.platform.content.mapper.ArticleMapper;
@@ -143,6 +144,25 @@ class ArticleServiceTest {
         assertThat(queries.get(1).getSqlSegment()).contains("view_count DESC");
         assertThat(queries.get(2).getSqlSegment()).contains("recommended", "published_at DESC");
         assertThat(queries.get(2).getParamNameValuePairs()).containsValue(1);
+    }
+
+    @Test
+    void searchUsesPublishedStatusAndGroupedLikeConditions() {
+        Page<Article> emptyPage = Page.of(1, 10);
+        emptyPage.setRecords(List.of());
+        emptyPage.setTotal(0);
+        when(articleMapper.selectPage(any(), any())).thenReturn(emptyPage);
+
+        service().page(1, 10, null, "  深蹲  ");
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<LambdaQueryWrapper<Article>> queryCaptor =
+                ArgumentCaptor.forClass(LambdaQueryWrapper.class);
+        verify(articleMapper).selectPage(any(), queryCaptor.capture());
+        LambdaQueryWrapper<Article> query = queryCaptor.getValue();
+        assertPublished(query);
+        assertThat(query.getSqlSegment()).contains("title", "summary", "content", "published_at DESC");
+        assertThat(query.getParamNameValuePairs()).containsValue("%深蹲%");
     }
 
     private ArticleService service() {

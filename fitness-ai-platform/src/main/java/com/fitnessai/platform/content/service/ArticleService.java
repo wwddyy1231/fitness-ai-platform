@@ -42,10 +42,15 @@ public class ArticleService {
         this.jdbc = jdbc;
     }
 
-    public PageResponse<ArticleVO> page(long page, long size, Long categoryId) {
+    public PageResponse<ArticleVO> page(long page, long size, Long categoryId, String keyword) {
+        String normalizedKeyword = keyword == null ? "" : keyword.trim();
         var query = new LambdaQueryWrapper<Article>()
                 .eq(Article::getStatus, PUBLISHED)
                 .eq(categoryId != null, Article::getCategoryId, categoryId)
+                .and(!normalizedKeyword.isEmpty(), search -> search
+                        .like(Article::getTitle, normalizedKeyword)
+                        .or().like(Article::getSummary, normalizedKeyword)
+                        .or().like(Article::getContent, normalizedKeyword))
                 .orderByDesc(Article::getPublishedAt);
         Page<Article> result = articleMapper.selectPage(Page.of(page, size), query);
         return new PageResponse<>(toVOs(result.getRecords()), result.getTotal(), page, size);

@@ -33,6 +33,15 @@ const routes: RouteRecordRaw[] = [
           description: '按健身分类浏览专业训练、营养与器材内容。',
         },
       },
+      {
+        path: 'search',
+        name: 'article-search',
+        component: () => import('@/views/ArticleSearchView.vue'),
+        meta: {
+          title: '文章搜索｜Fitness AI Platform',
+          description: '搜索 Fitness AI Platform 的训练、营养和健身知识内容。',
+        },
+      },
     ],
   },
 ]

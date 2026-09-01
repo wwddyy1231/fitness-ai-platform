@@ -5,6 +5,7 @@ import { ElMessage } from 'element-plus'
 const mobileMenuOpen = ref(false)
 const desktopSearchOpen = ref(false)
 const searchKeyword = ref('')
+const router = useRouter()
 
 const navigation = [
   { label: '首页', href: '/' },
@@ -18,7 +19,13 @@ const navigation = [
 
 function submitSearch() {
   const keyword = searchKeyword.value.trim()
-  ElMessage.info(keyword ? `“${keyword}”搜索将在内容接口接入后开放` : '请输入搜索关键词')
+  if (!keyword) {
+    ElMessage.info('请输入搜索关键词')
+    return
+  }
+  desktopSearchOpen.value = false
+  mobileMenuOpen.value = false
+  void router.push({ name: 'article-search', query: { q: keyword } })
 }
 </script>
 
