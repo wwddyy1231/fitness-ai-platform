@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ArticleSummary } from '@/types/content'
-defineProps<{ article: ArticleSummary }>()
+withDefaults(defineProps<{ article: ArticleSummary; showTags?: boolean }>(), { showTags: false })
 const formatDate = (value: string) => {
   const date = new Date(value)
   return Number.isNaN(date.getTime())
@@ -33,6 +33,9 @@ const formatDate = (value: string) => {
         <time :datetime="article.publishedAt">{{ formatDate(article.publishedAt) }}</time
         ><span>{{ article.readCount.toLocaleString('zh-CN') }} 阅读</span>
       </div>
+      <div v-if="showTags && article.tags.length" class="tags" aria-label="文章标签">
+        <span v-for="tag in article.tags" :key="tag">{{ tag }}</span>
+      </div>
     </div>
   </article>
 </template>
@@ -57,6 +60,9 @@ const formatDate = (value: string) => {
   object-fit: cover;
   transition: transform var(--transition-slow);
 }
+.article-content {
+  min-width: 0;
+}
 .article-list-item:hover img {
   transform: scale(1.025);
 }
@@ -73,6 +79,9 @@ h3 {
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-heading);
 }
+h3 a {
+  overflow-wrap: anywhere;
+}
 p {
   display: -webkit-box;
   overflow: hidden;
@@ -87,6 +96,19 @@ p {
   gap: var(--space-4);
   color: var(--color-text-subtle);
   font-size: var(--font-size-xs);
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+.tags span {
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-primary-50);
+  border-radius: var(--radius-xs);
+  color: var(--color-primary-700);
+  font-size: var(--font-size-2xs);
 }
 @media (max-width: 600px) {
   .article-list-item {

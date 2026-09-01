@@ -16,7 +16,9 @@ const icon = computed(() => icons[props.category.icon])
 </script>
 
 <template>
-  <a class="category-card" :href="`/#${category.id}`"
+  <RouterLink
+    class="category-card"
+    :to="{ name: 'category-articles', params: { slug: category.slug } }"
     ><span class="icon-wrap"><component :is="icon" :size="22" aria-hidden="true" /></span>
     <div>
       <h3>{{ category.name }}</h3>
@@ -24,7 +26,7 @@ const icon = computed(() => icons[props.category.icon])
     </div>
     <strong v-if="category.articleCount !== null"
       >{{ category.articleCount }}<small>篇</small></strong
-    ><strong v-else><small>专题</small></strong></a
+    ><strong v-else><small>专题</small></strong></RouterLink
   >
 </template>
 

@@ -12,6 +12,7 @@ export interface ArticleSummary {
   summary: string
   publishedAt: string
   readCount: number
+  tags: string[]
   image: ImageAsset
 }
 
@@ -25,6 +26,7 @@ export type CategoryIcon = 'muscle' | 'fat-loss' | 'strength' | 'home' | 'nutrit
 
 export interface FitnessCategory {
   id: string
+  slug: string
   name: string
   description: string
   articleCount: number | null

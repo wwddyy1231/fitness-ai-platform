@@ -37,6 +37,7 @@ export const featuredArticle: ArticleSummary = {
   summary: '用可执行的动作检查、负荷安排与恢复策略，让深蹲真正服务于长期力量增长。',
   publishedAt: '2026-08-26',
   readCount: 12840,
+  tags: [],
   image: strengthImage,
 }
 
@@ -48,6 +49,7 @@ export const featuredRecommendations: ArticleSummary[] = [
     summary: '把总量、质量和进餐节奏放回同一张计划表。',
     publishedAt: '2026-08-26',
     readCount: 8321,
+    tags: [],
     image: nutritionImage,
   },
   {
@@ -57,6 +59,7 @@ export const featuredRecommendations: ArticleSummary[] = [
     summary: '从髋铰链、呼吸到握法，建立可靠的动作起点。',
     publishedAt: '2026-08-25',
     readCount: 6749,
+    tags: [],
     image: kettlebellImage,
   },
   {
@@ -66,6 +69,7 @@ export const featuredRecommendations: ArticleSummary[] = [
     summary: '不要只看意志力，建立一套简单的训练前自检。',
     publishedAt: '2026-08-24',
     readCount: 5886,
+    tags: [],
     image: strengthImage,
   },
   {
@@ -75,6 +79,7 @@ export const featuredRecommendations: ArticleSummary[] = [
     summary: '适合工作日执行的备餐框架，不牺牲口感和营养。',
     publishedAt: '2026-08-23',
     readCount: 5194,
+    tags: [],
     image: nutritionImage,
   },
 ]
@@ -95,6 +100,7 @@ export const latestArticles: ArticleSummary[] = [
     summary: '从稳定支点、触胸位置到发力顺序，拆解常见的卧推停滞原因。',
     publishedAt: '2026-08-26',
     readCount: 4268,
+    tags: [],
     image: strengthImage,
   },
   {
@@ -104,6 +110,7 @@ export const latestArticles: ArticleSummary[] = [
     summary: '用更容易入口的食物组合补足蛋白质、碳水和水分。',
     publishedAt: '2026-08-26',
     readCount: 3512,
+    tags: [],
     image: nutritionImage,
   },
   {
@@ -113,6 +120,7 @@ export const latestArticles: ArticleSummary[] = [
     summary: '四个基础动作，兼顾下肢、推拉与核心稳定。',
     publishedAt: '2026-08-25',
     readCount: 7190,
+    tags: [],
     image: kettlebellImage,
   },
   {
@@ -122,6 +130,7 @@ export const latestArticles: ArticleSummary[] = [
     summary: '根据训练经验、恢复时间和目标选择更可持续的结构。',
     publishedAt: '2026-08-24',
     readCount: 6023,
+    tags: [],
     image: strengthImage,
   },
 ]
@@ -129,6 +138,7 @@ export const latestArticles: ArticleSummary[] = [
 export const fitnessCategories: FitnessCategory[] = [
   {
     id: 'muscle',
+    slug: 'muscle',
     name: '增肌',
     description: '训练容量与渐进超负荷',
     articleCount: 128,
@@ -136,6 +146,7 @@ export const fitnessCategories: FitnessCategory[] = [
   },
   {
     id: 'fat-loss',
+    slug: 'fat-loss',
     name: '减脂',
     description: '饮食、训练与行为习惯',
     articleCount: 96,
@@ -143,6 +154,7 @@ export const fitnessCategories: FitnessCategory[] = [
   },
   {
     id: 'strength',
+    slug: 'strength',
     name: '力量训练',
     description: '基础动作与力量周期',
     articleCount: 154,
@@ -150,6 +162,7 @@ export const fitnessCategories: FitnessCategory[] = [
   },
   {
     id: 'home',
+    slug: 'home',
     name: '居家训练',
     description: '有限器械的高效方案',
     articleCount: 72,
@@ -157,6 +170,7 @@ export const fitnessCategories: FitnessCategory[] = [
   },
   {
     id: 'nutrition',
+    slug: 'nutrition',
     name: '营养',
     description: '表现、恢复与体重管理',
     articleCount: 113,
@@ -164,6 +178,7 @@ export const fitnessCategories: FitnessCategory[] = [
   },
   {
     id: 'equipment',
+    slug: 'equipment',
     name: '健身器材',
     description: '选购、使用与维护',
     articleCount: 61,

@@ -20,6 +20,7 @@ declare module 'vue' {
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElDrawer: typeof import('element-plus/es')['ElDrawer']
     ElInput: typeof import('element-plus/es')['ElInput']
+    ElPagination: typeof import('element-plus/es')['ElPagination']
     ElSkeleton: typeof import('element-plus/es')['ElSkeleton']
     FeaturedArticle: typeof import('./components/business/FeaturedArticle.vue')['default']
     HomeRemoteState: typeof import('./components/common/HomeRemoteState.vue')['default']

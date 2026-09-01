@@ -24,6 +24,15 @@ const routes: RouteRecordRaw[] = [
           description: '阅读 Fitness AI Platform 的专业健身训练、营养与器材内容。',
         },
       },
+      {
+        path: 'category/:slug',
+        name: 'category-articles',
+        component: () => import('@/views/CategoryArticleListView.vue'),
+        meta: {
+          title: '分类文章｜Fitness AI Platform',
+          description: '按健身分类浏览专业训练、营养与器材内容。',
+        },
+      },
     ],
   },
 ]

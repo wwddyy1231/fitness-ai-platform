@@ -111,6 +111,7 @@ function mapArticle(
     summary: article.summary?.trim() || '暂无摘要',
     publishedAt: article.publishedAt ?? '',
     readCount: Number.isFinite(article.viewCount) ? article.viewCount : 0,
+    tags: (article.tags ?? []).map((tag) => tag.trim()).filter(Boolean),
     image: {
       src: normalizeCoverUrl(article.coverUrl) || presentation.fallbackImage,
       alt: `${title}封面图片`,
@@ -125,6 +126,7 @@ function mapCategory(category: HomeCategoryDto): FitnessCategory {
   const presentation = categoryPresentation[category.slug] ?? defaultPresentation
   return {
     id: requireId(category.id),
+    slug: category.slug,
     name: category.name,
     description: presentation.description,
     articleCount: null,
