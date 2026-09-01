@@ -15,6 +15,15 @@ const routes: RouteRecordRaw[] = [
             '获取力量训练、减脂、健身营养、器材与训练计划知识，并使用 AI 健身助手梳理你的下一步行动。',
         },
       },
+      {
+        path: 'article/:id',
+        name: 'article-detail',
+        component: () => import('@/views/ArticleDetailView.vue'),
+        meta: {
+          title: '文章详情｜Fitness AI Platform',
+          description: '阅读 Fitness AI Platform 的专业健身训练、营养与器材内容。',
+        },
+      },
     ],
   },
 ]

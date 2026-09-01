@@ -14,32 +14,37 @@ const formatDate = (value: string) => {
 <template>
   <section class="featured" aria-labelledby="featured-title">
     <article class="featured-primary">
-      <img
-        :src="article.image.src"
-        :alt="article.image.alt"
-        :width="article.image.width"
-        :height="article.image.height"
-        fetchpriority="high"
-      />
-      <div class="featured-overlay">
-        <span class="article-category">{{ article.category }}</span>
-        <h1 id="featured-title">{{ article.title }}</h1>
-        <p>{{ article.summary }}</p>
-        <div class="article-meta">
-          <time :datetime="article.publishedAt">{{ formatDate(article.publishedAt) }}</time
-          ><span>{{ article.readCount.toLocaleString('zh-CN') }} 阅读</span>
+      <RouterLink
+        class="featured-primary-link"
+        :to="{ name: 'article-detail', params: { id: article.id } }"
+      >
+        <img
+          :src="article.image.src"
+          :alt="article.image.alt"
+          :width="article.image.width"
+          :height="article.image.height"
+          fetchpriority="high"
+        />
+        <div class="featured-overlay">
+          <span class="article-category">{{ article.category }}</span>
+          <h1 id="featured-title">{{ article.title }}</h1>
+          <p>{{ article.summary }}</p>
+          <div class="article-meta">
+            <time :datetime="article.publishedAt">{{ formatDate(article.publishedAt) }}</time
+            ><span>{{ article.readCount.toLocaleString('zh-CN') }} 阅读</span>
+          </div>
         </div>
-      </div>
+      </RouterLink>
     </article>
     <div class="recommendation-list" aria-label="重点推荐">
       <div class="recommendation-heading"><span>EDITOR'S PICK</span><strong>重点推荐</strong></div>
       <article v-for="item in recommendations" :key="item.id" class="recommendation-item">
-        <div>
+        <RouterLink :to="{ name: 'article-detail', params: { id: item.id } }">
           <span class="recommendation-category">{{ item.category }}</span>
           <h2>{{ item.title }}</h2>
           <time :datetime="item.publishedAt">{{ formatDate(item.publishedAt) }}</time>
-        </div>
-        <ArrowRight :size="18" aria-hidden="true" />
+          <ArrowRight :size="18" aria-hidden="true" />
+        </RouterLink>
       </article>
     </div>
   </section>
@@ -56,6 +61,10 @@ const formatDate = (value: string) => {
   position: relative;
   min-height: 38rem;
   overflow: hidden;
+}
+.featured-primary-link {
+  display: block;
+  height: 100%;
 }
 .featured-primary::after {
   position: absolute;
@@ -125,15 +134,16 @@ const formatDate = (value: string) => {
 .recommendation-heading strong {
   font-size: var(--font-size-sm);
 }
-.recommendation-item {
+.recommendation-item > a {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-4) 0;
   border-bottom: 1px solid #354139;
+  height: 100%;
 }
-.recommendation-item:last-child {
+.recommendation-item:last-child > a {
   border-bottom: 0;
 }
 .recommendation-category {
@@ -150,7 +160,7 @@ const formatDate = (value: string) => {
   color: #849289;
   font-size: var(--font-size-2xs);
 }
-.recommendation-item > svg {
+.recommendation-item svg {
   color: #708077;
 }
 

@@ -58,6 +58,29 @@ class ArticleServiceTest {
     }
 
     @Test
+    void anonymousUserCanReadPublishedArticle() {
+        Article published = article(1L, "PUBLISHED");
+        when(articleMapper.selectById(1L)).thenReturn(published);
+        when(tagMapper.selectNamesByArticleIds(List.of(1L))).thenReturn(List.of());
+
+        assertThat(service().get(1L)).satisfies(article -> {
+            assertThat(article.id()).isEqualTo(1L);
+            assertThat(article.status()).isEqualTo("PUBLISHED");
+        });
+    }
+
+    @Test
+    void missingArticleIsNotExposed() {
+        when(articleMapper.selectById(404L)).thenReturn(null);
+
+        assertThatThrownBy(() -> service().get(404L))
+                .isInstanceOfSatisfying(BusinessException.class, exception -> {
+                    assertThat(exception.getCode()).isEqualTo(40401);
+                    assertThat(exception.getMessage()).isEqualTo("文章不存在");
+                });
+    }
+
+    @Test
     void memberCannotReadUnpublishedArticle() {
         Article draft = article(1L, "DRAFT");
         when(articleMapper.selectById(1L)).thenReturn(draft);

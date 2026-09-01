@@ -7,10 +7,10 @@ defineProps<{ items: TrendingArticle[] }>()
   <ol class="trending-list">
     <li v-for="(item, index) in items" :key="item.id">
       <span class="rank">{{ String(index + 1).padStart(2, '0') }}</span>
-      <div>
+      <RouterLink :to="{ name: 'article-detail', params: { id: item.id } }">
         <span class="category">{{ item.category }}</span>
         <h3>{{ item.title }}</h3>
-      </div>
+      </RouterLink>
     </li>
   </ol>
 </template>

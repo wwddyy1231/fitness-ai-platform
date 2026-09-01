@@ -14,6 +14,8 @@ declare module 'vue' {
     AiCoachBanner: typeof import('./components/business/AiCoachBanner.vue')['default']
     ArticleListItem: typeof import('./components/business/ArticleListItem.vue')['default']
     CategoryCard: typeof import('./components/business/CategoryCard.vue')['default']
+    ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
+    ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElDrawer: typeof import('element-plus/es')['ElDrawer']

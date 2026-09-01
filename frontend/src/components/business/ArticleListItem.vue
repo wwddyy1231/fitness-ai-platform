@@ -11,7 +11,7 @@ const formatDate = (value: string) => {
 
 <template>
   <article class="article-list-item">
-    <div class="article-image">
+    <RouterLink class="article-image" :to="{ name: 'article-detail', params: { id: article.id } }">
       <img
         :src="article.image.src"
         :alt="article.image.alt"
@@ -20,10 +20,14 @@ const formatDate = (value: string) => {
         loading="lazy"
         decoding="async"
       />
-    </div>
+    </RouterLink>
     <div class="article-content">
       <span class="category">{{ article.category }}</span>
-      <h3>{{ article.title }}</h3>
+      <h3>
+        <RouterLink :to="{ name: 'article-detail', params: { id: article.id } }">{{
+          article.title
+        }}</RouterLink>
+      </h3>
       <p>{{ article.summary }}</p>
       <div class="meta">
         <time :datetime="article.publishedAt">{{ formatDate(article.publishedAt) }}</time

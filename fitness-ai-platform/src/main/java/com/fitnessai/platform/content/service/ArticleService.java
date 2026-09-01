@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -106,18 +108,22 @@ public class ArticleService {
         if (articles.isEmpty()) return List.of();
 
         List<Long> articleIds = articles.stream().map(Article::getId).toList();
+        List<Long> categoryIds = articles.stream().map(Article::getCategoryId).distinct().toList();
+        Map<Long, Category> categoriesById = categoryMapper.selectByIds(categoryIds).stream()
+                .collect(Collectors.toMap(Category::getId, Function.identity()));
         Map<Long, List<String>> tagsByArticleId = new HashMap<>();
         for (ArticleTagRow row : tagMapper.selectNamesByArticleIds(articleIds)) {
             tagsByArticleId.computeIfAbsent(row.articleId(), ignored -> new ArrayList<>()).add(row.tagName());
         }
         return articles.stream()
-                .map(article -> toVO(article, tagsByArticleId.getOrDefault(article.getId(), List.of())))
+                .map(article -> toVO(article, categoriesById.get(article.getCategoryId()),
+                        tagsByArticleId.getOrDefault(article.getId(), List.of())))
                 .toList();
     }
 
-    private ArticleVO toVO(Article article, List<String> tags) {
-        return new ArticleVO(article.getId(), article.getCategoryId(), article.getTitle(), article.getSummary(),
-                article.getContent(), article.getCoverUrl(), article.getStatus(),
+    private ArticleVO toVO(Article article, Category category, List<String> tags) {
+        return new ArticleVO(article.getId(), article.getCategoryId(), category == null ? null : category.getName(),
+                article.getTitle(), article.getSummary(), article.getContent(), article.getCoverUrl(), article.getStatus(),
                 Integer.valueOf(1).equals(article.getRecommended()),
                 article.getViewCount() == null ? 0 : article.getViewCount(), article.getPublishedAt(), tags);
     }
