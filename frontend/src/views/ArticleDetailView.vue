@@ -1,10 +1,18 @@
 <script setup lang="ts">
-import { ArrowLeft, RefreshCw } from '@lucide/vue'
+import { ArrowLeft, Bookmark, RefreshCw } from '@lucide/vue'
+import { ElMessage } from 'element-plus'
+import { computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 import { useArticleDetail } from '@/composables/useArticleDetail'
+import { useArticleFavorite } from '@/composables/useArticleFavorite'
+import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
+const router = useRouter()
+const authStore = useAuthStore()
 const { status, data: article, errorMessage, errorKind, load, retry } = useArticleDetail()
+const favorite = useArticleFavorite()
 
 const articleId = computed(() => {
   const value = route.params.id
@@ -12,6 +20,26 @@ const articleId = computed(() => {
 })
 
 watch(articleId, (id) => id && void load(id), { immediate: true })
+watch(
+  [articleId, () => authStore.isAuthenticated, status],
+  ([id, authenticated, articleStatus]) => {
+    if (id && authenticated && (articleStatus === 'success' || articleStatus === 'empty')) {
+      void favorite.load(id)
+    } else {
+      favorite.reset()
+    }
+  },
+  { immediate: true },
+)
+
+async function toggleFavorite(): Promise<void> {
+  if (!authStore.isAuthenticated) {
+    await router.push({ name: 'login', query: { redirect: route.fullPath } })
+    return
+  }
+  await favorite.toggle(articleId.value)
+  if (favorite.status.value === 'error') ElMessage.error(favorite.errorMessage.value)
+}
 
 function formatDate(value: string | null): string {
   if (!value) return '发布时间待更新'
@@ -48,10 +76,28 @@ const errorTitle = computed(() => {
           <span class="article-category">{{ article.categoryName }}</span>
           <h1>{{ article.title }}</h1>
           <div class="article-meta">
-            <time :datetime="article.publishedAt || undefined">{{
-              formatDate(article.publishedAt)
-            }}</time>
-            <span>{{ article.viewCount.toLocaleString('zh-CN') }} 阅读</span>
+            <div class="article-meta-copy">
+              <time :datetime="article.publishedAt || undefined">{{
+                formatDate(article.publishedAt)
+              }}</time>
+              <span>{{ article.viewCount.toLocaleString('zh-CN') }} 阅读</span>
+            </div>
+            <el-button
+              class="favorite-button"
+              :type="favorite.favorited.value ? 'primary' : 'default'"
+              :plain="favorite.favorited.value"
+              :loading="favorite.loading.value"
+              :disabled="favorite.loading.value"
+              :aria-pressed="favorite.favorited.value"
+              @click="toggleFavorite"
+            >
+              <Bookmark
+                :size="17"
+                :fill="favorite.favorited.value ? 'currentColor' : 'none'"
+                aria-hidden="true"
+              />
+              {{ favorite.favorited.value ? '已收藏' : '收藏' }}
+            </el-button>
           </div>
         </header>
 
@@ -128,9 +174,21 @@ const errorTitle = computed(() => {
 .article-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-4);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-6);
   color: var(--color-text-subtle);
   font-size: var(--font-size-sm);
+}
+.article-meta-copy {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+.favorite-button :deep(span) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 .article-cover {
   overflow: hidden;

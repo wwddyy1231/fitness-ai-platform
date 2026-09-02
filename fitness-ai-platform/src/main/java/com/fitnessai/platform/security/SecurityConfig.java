@@ -31,6 +31,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/home/**", "/api/v1/articles/**",
                                 "/api/v1/categories/**", "/api/v1/tags/**", "/files/**").permitAll()
+                        .requestMatchers("/api/v1/favorites/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/ai/knowledge/refresh").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/articles/**", "/api/v1/categories/**",

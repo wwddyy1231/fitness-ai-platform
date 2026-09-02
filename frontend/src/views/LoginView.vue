@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
 import { computed, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { useAuthStore } from '@/stores/auth'
+import { safeInternalRedirect } from '@/utils/redirect'
 
 interface LoginForm {
   username: string
@@ -12,6 +13,7 @@ interface LoginForm {
 
 const authStore = useAuthStore()
 const router = useRouter()
+const route = useRoute()
 const formRef = ref<FormInstance>()
 const form = reactive<LoginForm>({ username: '', password: '' })
 const rules: FormRules<LoginForm> = {
@@ -25,7 +27,7 @@ async function submit(): Promise<void> {
   const valid = await formRef.value.validate().catch(() => false)
   if (!valid) return
   if (await authStore.login({ username: form.username.trim(), password: form.password })) {
-    await router.replace({ name: 'home' })
+    await router.replace(safeInternalRedirect(route.query.redirect) ?? { name: 'home' })
   }
 }
 </script>

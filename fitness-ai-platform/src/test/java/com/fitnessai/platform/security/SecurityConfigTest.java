@@ -5,6 +5,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +23,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -67,6 +69,20 @@ class SecurityConfigTest {
     }
 
     @Test
+    void requiresAuthenticationForAllFavoriteOperations() throws Exception {
+        mockMvc.perform(get("/api/v1/favorites/articles/1")).andExpect(status().isUnauthorized());
+        mockMvc.perform(put("/api/v1/favorites/articles/1")).andExpect(status().isUnauthorized());
+        mockMvc.perform(delete("/api/v1/favorites/articles/1")).andExpect(status().isUnauthorized());
+
+        mockMvc.perform(get("/api/v1/favorites/articles/1").with(user("member").roles("MEMBER")))
+                .andExpect(status().isOk());
+        mockMvc.perform(put("/api/v1/favorites/articles/1").with(user("member").roles("MEMBER")))
+                .andExpect(status().isOk());
+        mockMvc.perform(delete("/api/v1/favorites/articles/1").with(user("member").roles("MEMBER")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void reservesDeletesAndKnowledgeRefreshForAdmin() throws Exception {
         mockMvc.perform(delete("/api/v1/articles/1").with(user("editor").roles("EDITOR")))
                 .andExpect(status().isForbidden());
@@ -102,7 +118,8 @@ class SecurityConfigTest {
 
     @RestController
     static class TestController {
-        @GetMapping({"/api/v1/articles/1", "/api/v1/home", "/api/v1/auth/me"})
+        @GetMapping({"/api/v1/articles/1", "/api/v1/home", "/api/v1/auth/me",
+                "/api/v1/favorites/articles/1"})
         Map<String, Boolean> read() {
             return Map.of("ok", true);
         }
@@ -115,6 +132,16 @@ class SecurityConfigTest {
 
         @DeleteMapping("/api/v1/articles/1")
         Map<String, Boolean> deleteArticle() {
+            return Map.of("ok", true);
+        }
+
+        @PutMapping("/api/v1/favorites/articles/1")
+        Map<String, Boolean> favorite() {
+            return Map.of("ok", true);
+        }
+
+        @DeleteMapping("/api/v1/favorites/articles/1")
+        Map<String, Boolean> unfavorite() {
             return Map.of("ok", true);
         }
     }
